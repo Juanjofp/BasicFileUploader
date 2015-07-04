@@ -17,7 +17,7 @@ var FUploader = (function IIFE() {
         this.progress = progress;
         this.progress.value = 0;
         this.inputFile.onchange = onFilesSelecteds.bind(this);
-        console.log(inputFile);
+        console.log(inputFile, preview, progress);
     }
 
     function listFilesSelected() {
@@ -34,9 +34,12 @@ var FUploader = (function IIFE() {
         }
     }
 
-    function upload(url) {
+    function upload(url, data) {
+
+        var fire = false;
+        var formData = new FormData();
+
         if(this.inputFile && this.inputFile.files) {
-            var formData = new FormData();
 
             for(var i = 0; i < this.inputFile.files.length; i++) {
                 var file = this.inputFile.files[i];
@@ -44,8 +47,20 @@ var FUploader = (function IIFE() {
                     continue;
                 }
                 formData.append('images', file, file.name);
+                fire = true;
             }
+        }
 
+        if(data) {
+            for (var key in data) {
+                if (data.hasOwnProperty(key)) {
+                    formData.append(key, data[key]);
+                    fire = true;
+                }
+            }
+        }
+
+        if(fire) {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', url, true);
 
