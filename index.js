@@ -20,7 +20,6 @@
         {file: eleFile4, preview: preview4}], eleProgress);
 
     // URL file uploader
-    //var url = 'http://push.juanjofp.com/api/v1/files/';
     var url = 'http://localhost:3123/api/v1/files/';
 
     console.log('Uploading files');
