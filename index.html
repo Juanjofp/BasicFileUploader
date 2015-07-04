@@ -1,8 +1,10 @@
 <html>
     <head>
         <title>File Uploader</title>
+        <link rel="stylesheet" type="text/css" href="index.css">
         <script type="text/javascript" src="fuploader.js"></script>
         <script type="text/javascript" src="multiuploader.js"></script>
+        <script type="text/javascript" src="singlemultiuploader.js"></script>
         <script defer type="text/javascript" src="index.js"></script>
     </head>
     <body>
@@ -14,17 +16,49 @@
         <progress value="0" id="progress1"></progress>
 
         <h1>Multi Uploader</h1>
-        <div id="preview1"></div>
-        <input type="file" id="file1" name="image1" multiple/>
-        <div id="preview2"></div>
-        <input type="file" id="file2" name="image2" multiple/>
-        <div id="preview3"></div>
-        <input type="file" id="file3" name="image3" multiple/>
-        <div id="preview4"></div>
-        <input type="file" id="file4" name="image4" multiple/>
-        <br/>
+        <div class="container">
+            <div class="column column-one">
+                <div id="preview1"></div>
+                <input type="file" id="file1" name="image1" multiple/>
+            </div>
+            <div class="column column-two">
+                <div id="preview2"></div>
+                <input type="file" id="file2" name="image2" multiple/>
+            </div>
+            <div class="column column-three">
+                <div id="preview3"></div>
+                <input type="file" id="file3" name="image3" multiple/>
+            </div>
+            <div class="column column-four">
+                <div id="preview4"></div>
+                <input type="file" id="file4" name="image4" multiple/>
+            </div>
+        </div>
         <input type="button" id="upload2" value="Upload files"/>
         <progress value="0" id="progress2"></progress>
+
+        <h1>Single Multi Uploader</h1>
+        <div class="container">
+            <div class="column column-one">
+                <img id="img1" src="http://www.leoncidesign.com/images/placeholder.png" width="300px"></img><br>
+                <input type="file" id="file11" name="image11"/>
+            </div>
+            <div class="column column-two">
+                <img id="img2" src="http://www.leoncidesign.com/images/placeholder.png" width="150px"></img><br>
+                <input type="file" id="file21" name="image21"/>
+            </div>
+            <div class="column column-three">
+                <img id="img3" src="http://www.leoncidesign.com/images/placeholder.png" width="100px" height="100px" class="img-circle"></img>
+                <br>
+                <input type="file" id="file31" name="image31"/>
+            </div>
+            <div class="column column-four">
+                <img id="img4" src="http://www.leoncidesign.com/images/placeholder.png" width="48px"></img><br>
+                <input type="file" id="file41" name="image41"/>
+            </div>
+        </div>
+        <input type="button" id="upload3" value="Upload files"/>
+        <progress value="0" id="progress3"></progress>
 
     </body>
 </html>

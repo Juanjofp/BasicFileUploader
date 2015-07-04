@@ -1,0 +1,33 @@
+.container {
+    display: flex;
+}
+
+.column {
+    flex: 1;
+    
+    /*for demo purposes only */
+    background: #f2f2f2;
+    border: 1px solid #e6e6e6;
+    box-sizing: border-box;
+}
+
+.column-one {
+    order: 1;
+    align-self: flex-end;
+}
+.column-two {
+    order: 2;
+    align-self: flex-end;
+}
+.column-three {
+    order: 3;
+    align-self: flex-end;
+}
+.column-four {
+    order: 4;
+    align-self: flex-end;
+}
+
+.img-circle {
+    border-radius: 50%;
+}
