@@ -22,6 +22,11 @@ var FUploader = (function IIFE() {
 
     function listFilesSelected() {
         if(this.inputFile && this.inputFile.files && this.preview) {
+
+            while (this.preview.firstChild) {
+                this.preview.removeChild(this.preview.firstChild);
+            }
+
             for(var i = 0; i < this.inputFile.files.length; i++) {
                 var file = this.inputFile.files[i];
                 console.log(i+'>' , file.name);
