@@ -5,7 +5,7 @@ var FUploader = (function IIFE() {
         var reader = new FileReader();
 
         reader.onload = function loadImage(evt) {
-            console.log('onload file', evt.target.result);
+            //console.log('onload file', evt.target.result);
             imgTag.src = evt.target.result;
         };
         reader.readAsDataURL(file);
@@ -17,7 +17,7 @@ var FUploader = (function IIFE() {
         this.progress = progress;
         this.progress.value = 0;
         this.inputFile.onchange = onFilesSelecteds.bind(this);
-        console.log(inputFile, preview, progress);
+        //console.log(inputFile, preview, progress);
     }
 
     function listFilesSelected() {
@@ -29,7 +29,7 @@ var FUploader = (function IIFE() {
 
             for(var i = 0; i < this.inputFile.files.length; i++) {
                 var file = this.inputFile.files[i];
-                console.log(i+'>' , file.name);
+                //console.log(i+'>' , file.name);
                 var img = document.createElement('img');
                 img.width = '100';
                 img.alt = 'preview ' + file.name;
@@ -39,7 +39,7 @@ var FUploader = (function IIFE() {
         }
     }
 
-    function upload(url, data) {
+    function uploadData(url, data, resolve, reject) {
 
         var fire = false;
         var formData = new FormData();
@@ -70,39 +70,61 @@ var FUploader = (function IIFE() {
             xhr.open('POST', url, true);
 
             xhr.upload.addEventListener('progress', onXHRProgress.bind(this), false);
-            xhr.upload.addEventListener('load', onXHRLoad.bind(this), false);
-            xhr.upload.addEventListener('error', onXHRError.bind(this), false);
-            xhr.upload.addEventListener('abort', onXHRAbort.bind(this), false);
+            //xhr.upload.addEventListener('load', onXHRLoad.bind(this, resolve), false);
+            xhr.upload.addEventListener('error', onXHRError.bind(this, reject), false);
+            xhr.upload.addEventListener('abort', onXHRAbort.bind(this, reject), false);
+            xhr.addEventListener('load', onXHRLoad.bind(this, resolve), false);
+            xhr.addEventListener('error', onXHRError.bind(this, reject), false);
+            xhr.addEventListener('abort', onXHRAbort.bind(this, reject), false);
 
-            xhr.send(formData);
+            try {
+                xhr.send(formData);
+            }
+            catch(err) {
+                reject(err);
+            }
+            
+        }
+        else {
+            reject(new Error('No data to upload'));
         }
     }
 
-    function onXHRLoad(evt) {
-        console.log('Files loaded!', evt);
+    function upload(url, data) {
+        var fn = uploadData.bind(this);
+        return new Promise(function executor(resolve, reject) {
+            fn(url, data, resolve, reject);
+        });
+    }
+
+    function onXHRLoad(resolve, evt) {
+        //console.log('Files loaded!', resolve, evt);
         if(this.progress) {
             this.progress.value = 1;
         }
+        resolve(evt.target.response);
     }
 
-    function onXHRError(evt) {
-        console.log('Error on upload', evt);
+    function onXHRError(reject, evt) {
+        //console.log('Error on upload', reject, evt);
+        reject(evt);
     }
 
-    function onXHRAbort(evt) {
-        console.log('Abort Uploader', evt);
+    function onXHRAbort(reject, evt) {
+        //console.log('Abort Uploader', reject, evt);
+        reject(evt);
     }
 
     function onXHRProgress(evt) {
         if (evt.lengthComputable) {
             var percentComplete = evt.loaded / evt.total;
-            console.log('Current Progress: ', percentComplete);
+            //console.log('Current Progress: ', percentComplete);
             if(this.progress) {
                 this.progress.value = percentComplete;
             }
         } else {
             // Unable to compute progress information since the total size is unknown
-            console.log('Uncomputable progress');
+            //console.log('Uncomputable progress');
             if(this.progress) {
                 this.progress.value = '-1';
             }
@@ -110,7 +132,7 @@ var FUploader = (function IIFE() {
     }
 
     function onFilesSelecteds() {
-        console.log('Files changed');
+        //console.log('Files changed');
         listFilesSelected.call(this);
     }
 

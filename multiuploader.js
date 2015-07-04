@@ -5,7 +5,7 @@ var MUploader = (function IIFE() {
         var reader = new FileReader();
 
         reader.onload = function loadImage(evt) {
-            console.log('onload file', evt.target.result);
+            //console.log('onload file', evt.target.result);
             imgTag.src = evt.target.result;
         };
         reader.readAsDataURL(file);
@@ -18,7 +18,7 @@ var MUploader = (function IIFE() {
         for(var i = 0; i < this.eleFiles.length; ++i) {
             var inputFile = this.eleFiles[i].file;
             inputFile.onchange = onFilesSelecteds.bind(this);
-            console.log(inputFile);
+            //console.log(inputFile);
         }
     }
 
@@ -26,7 +26,7 @@ var MUploader = (function IIFE() {
         if(this.eleFiles && this.eleFiles.length > 0) {
             for(var j = 0; j < this.eleFiles.length; j++) {
 
-                console.log('Matchibg', inputTarget, this.eleFiles[j]);
+                //console.log('Matchibg', inputTarget, this.eleFiles[j]);
                 if(inputTarget !== this.eleFiles[j].file) {
                     continue;
                 }
@@ -41,7 +41,7 @@ var MUploader = (function IIFE() {
 
                     for(var i = 0; i < inputFile.files.length; i++) {
                         var file = inputFile.files[i];
-                        console.log(i+'>' , file.name);
+                        //console.log(i+'>' , file.name);
                         var img = document.createElement('img');
                         img.width = '100';
                         img.alt = 'preview ' + file.name;
@@ -53,7 +53,7 @@ var MUploader = (function IIFE() {
         }
     }
 
-    function upload(url, data) {
+    function uploadData(url, data, resolve, reject) {
         var formData = new FormData();
         var fire = false;
 
@@ -66,7 +66,7 @@ var MUploader = (function IIFE() {
                         if(!file.type.match('image.*')) {
                             continue;
                         }
-                        console.log('Encapsulando file: ', inputFile.name, file, file.name);
+                        //console.log('Encapsulando file: ', inputFile.name, file, file.name);
                         formData.append(inputFile.name, file, file.name);
                         fire = true;
                     }
@@ -77,7 +77,7 @@ var MUploader = (function IIFE() {
         if(data) {
             for (var key in data) {
                 if (data.hasOwnProperty(key)) {
-                    console.log('Encapsulando: ', key, data[key]);
+                    //console.log('Encapsulando: ', key, data[key]);
                     formData.append(key, data[key]);
                     fire = true;
                 }
@@ -89,39 +89,60 @@ var MUploader = (function IIFE() {
             xhr.open('POST', url, true);
 
             xhr.upload.addEventListener('progress', onXHRProgress.bind(this), false);
-            xhr.upload.addEventListener('load', onXHRLoad.bind(this), false);
-            xhr.upload.addEventListener('error', onXHRError.bind(this), false);
-            xhr.upload.addEventListener('abort', onXHRAbort.bind(this), false);
+            //xhr.upload.addEventListener('load', onXHRLoad.bind(this, resolve), false);
+            xhr.upload.addEventListener('error', onXHRError.bind(this, reject), false);
+            xhr.upload.addEventListener('abort', onXHRAbort.bind(this, reject), false);
+            xhr.addEventListener('load', onXHRLoad.bind(this, resolve), false);
+            xhr.addEventListener('error', onXHRError.bind(this, reject), false);
+            xhr.addEventListener('abort', onXHRAbort.bind(this, reject), false);
 
-            xhr.send(formData);
+            try {
+                xhr.send(formData);
+            }
+            catch(err) {
+                reject(err);
+            }
+        }
+        else {
+            reject(new Error('No data to upload'));
         }
     }
 
-    function onXHRLoad(evt) {
-        console.log('Files loaded!', evt);
+    function upload(url, data) {
+        var fn = uploadData.bind(this);
+        return new Promise(function executor(resolve, reject) {
+            fn(url, data, resolve, reject);
+        });
+    }
+
+    function onXHRLoad(resolve, evt) {
+        //console.log('Files loaded!', resolve, evt);
         if(this.progress) {
             this.progress.value = 1;
         }
+        resolve(evt.target.response);
     }
 
-    function onXHRError(evt) {
-        console.log('Error on upload', evt);
+    function onXHRError(reject, evt) {
+        //console.log('Error on upload', reject, evt);
+        reject(evt);
     }
 
-    function onXHRAbort(evt) {
-        console.log('Abort Uploader', evt);
+    function onXHRAbort(reject, evt) {
+        //console.log('Abort Uploader', reject, evt);
+        reject(evt);
     }
 
     function onXHRProgress(evt) {
         if (evt.lengthComputable) {
             var percentComplete = evt.loaded / evt.total;
-            console.log('Current Progress: ', percentComplete);
+            //console.log('Current Progress: ', percentComplete);
             if(this.progress) {
                 this.progress.value = percentComplete;
             }
         } else {
             // Unable to compute progress information since the total size is unknown
-            console.log('Uncomputable progress');
+            //console.log('Uncomputable progress');
             if(this.progress) {
                 this.progress.value = '-1';
             }
@@ -129,9 +150,9 @@ var MUploader = (function IIFE() {
     }
 
     function onFilesSelecteds(evt) {
-        console.log('onclick', evt);
+        //console.log('onclick', evt);
         evt.preventDefault();
-        console.log('Files changed');
+        //console.log('Files changed');
         listFilesSelected.call(this, evt.target);
     }
 

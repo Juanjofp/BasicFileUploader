@@ -38,7 +38,14 @@
         data.valor2 = 'valor 2';
         data.valor3 = 'valor 3';
         data.valor4 = 'valor 4';
-        uploader.upload(url, data);
+        uploader.upload(url, data).then(
+            function fulfilled(data){
+                console.log('Promise OK', JSON.parse(data));
+            }, 
+            function rejected(err) {
+                console.log('Promise Error', err);
+            }
+        );
     };
 
     eleUpload2.onclick= function onClick(evt) {
@@ -48,6 +55,13 @@
         data.valor2 = 'valor 2';
         data.valor3 = 'valor 3';
         data.valor4 = 'valor 4';
-        uploader2.upload(url, data);
+        uploader2.upload(url, data).then(
+            function fulfilled(data){
+                console.log('Promise Multi OK', JSON.parse(data));
+            }, 
+            function rejected(err) {
+                console.log('Promise Multi Error', err);
+            }
+        );
     };
 })();
